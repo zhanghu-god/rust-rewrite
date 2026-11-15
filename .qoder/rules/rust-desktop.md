@@ -38,6 +38,8 @@ description: Rust 桌面软件项目的通用工程约定
 - 默认只分发便携 ZIP，不生成 NSIS 安装包；`tauri.conf.json` 中 `bundle.active=false`。
 - 版本号同步维护在 `Cargo.toml` 与 `tauri.conf.json`。
 - ZIP 包含 exe、README 和干净初始数据，不包含开发测试数据。
+- ZIP 内为**单一以 productName 命名的顶层目录**（如 `push-wp/`、`DDL Board/`、`Launch Manager/`），三个 app 打包格式统一；打包脚本用 `$Config.productName` 作 staging 目录名。
+- 主窗口类 app 默认窗口统一 1100×700、min 720×520、居中、可调整（启动器小面板除外），保证非全屏不超出屏幕。
 - 发布流程：release 编译 → 打包 → Git 提交并推送 `main` 与 `vX.Y.Z` tag → GitHub Release 上传 ZIP → 回读远端大小与 digest。
 - 统一用 `cargo build/test/clippy --workspace` 与 `cargo fmt --all`；各 app 打包脚本自动定位共享 `target/`。
 
