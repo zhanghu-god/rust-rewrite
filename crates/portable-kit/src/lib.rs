@@ -7,5 +7,6 @@
 //!
 //! 本 crate 不依赖 Tauri，纯 Rust 实现，便于在任意 Tauri app 中复用。
 
+pub mod logging;
 pub mod portable;
 pub mod update;

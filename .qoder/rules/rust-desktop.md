@@ -33,6 +33,12 @@ description: Rust 桌面软件项目的通用工程约定
 - debug 与 release 因 exe 位置不同而天然隔离。
 - 数据隔离实现统一复用 `portable-kit::portable`（`portable_data_dir` / `configure_webview_data_dir`），不在各 app 重复实现。
 
+## 运行日志
+
+- 每个 app 统一复用 `portable-kit::logging`：启动时 `init(app_name)` + `install_panic_hook()`，日志写入 exe 同级 `data/logs/<app>-<YYYY-MM-DD>.log`。
+- 日志行格式 `[RFC3339 时间] [级别] [应用名] 消息`；关键操作（启动/更新检查/启动程序/扫描/设置/增删改/发布）与错误均需记录，panic 记录位置与背栈，便于定位问题。
+- 常驻管理器（launch-manager）每小时调用 `logging::cleanup_old_logs` 清理自身与被管理应用超过 7 天的日志。
+
 ## 构建与发布
 
 - 默认只分发便携 ZIP，不生成 NSIS 安装包；`tauri.conf.json` 中 `bundle.active=false`。
