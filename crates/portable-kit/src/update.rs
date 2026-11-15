@@ -430,6 +430,27 @@ mod tests {
     };
 
     #[test]
+    fn update_info_serializes_camel_case_for_frontends() {
+        let info = UpdateInfo {
+            current_version: "0.3.4".into(),
+            latest_version: "0.3.6".into(),
+            has_update: true,
+            release_url: String::new(),
+            asset_name: String::new(),
+            asset_url: String::new(),
+            checksums_url: String::new(),
+            asset_size: 0,
+            asset_digest: String::new(),
+        };
+        let v = serde_json::to_value(&info).unwrap();
+        // 前端统一读 camelCase，锁定契约防止字段名漂移
+        assert!(v.get("hasUpdate").is_some());
+        assert!(v.get("currentVersion").is_some());
+        assert!(v.get("latestVersion").is_some());
+        assert!(v.get("has_update").is_none());
+    }
+
+    #[test]
     fn parses_v_prefixed_versions() {
         assert_eq!(parse_version("v0.2.0").unwrap(), Version::new(0, 2, 0));
         assert!(parse_version("v0.2.0").unwrap() > parse_version("0.1.0").unwrap());
