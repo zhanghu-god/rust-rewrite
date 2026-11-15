@@ -751,7 +751,7 @@ dependencies = [
 
 [[package]]
 name = "ddl-desktop"
-version = "0.3.3"
+version = "0.3.4"
 dependencies = [
  "chrono",
  "portable-kit",
@@ -2075,7 +2075,7 @@ dependencies = [
 
 [[package]]
 name = "launch-manager"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "portable-kit",
  "serde",
@@ -2926,7 +2926,7 @@ dependencies = [
 
 [[package]]
 name = "push-wp"
-version = "0.3.6"
+version = "0.3.7"
 dependencies = [
  "base64 0.22.1",
  "chrono",

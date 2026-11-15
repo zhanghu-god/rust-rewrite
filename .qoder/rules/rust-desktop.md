@@ -39,6 +39,12 @@ description: Rust 桌面软件项目的通用工程约定
 - 日志行格式 `[RFC3339 时间] [级别] [应用名] 消息`；关键操作（启动/更新检查/启动程序/扫描/设置/增删改/发布）与错误均需记录，panic 记录位置与背栈，便于定位问题。
 - 常驻管理器（launch-manager）每小时调用 `logging::cleanup_old_logs` 清理自身与被管理应用超过 7 天的日志。
 
+## 前端统一与复用
+
+- 共享前端层 `shared/ui/{base.css,base.js}`：统一设计令牌（家族调色板+旧名别名）、重置、滚动条、toast，以及 `window.PKUI` 工具库（invoke/listen/$/errorText/toast/applyTheme/systemDark/requireInvoke）。
+- 各 app `index.html` 先引 `shared/base.css` 与 `shared/base.js`；`style.css` 仅保留自身布局与语义令牌（如 --todo-bg/--code-bg）；`main.js` 复用 PKUI，不重复实现工具函数。
+- `scripts/sync-ui.mjs` 将 `shared/ui` 同步到各 app `src/shared`（零构建前端需物理存在）；打包脚本自动调用。改公共前端只改 `shared/ui` 一处。
+
 ## 构建与发布
 
 - 默认只分发便携 ZIP，不生成 NSIS 安装包；`tauri.conf.json` 中 `bundle.active=false`。

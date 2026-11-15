@@ -1,0 +1,103 @@
+/* portable-kit 共享前端基础层：统一设计令牌 + 重置 + 滚动条 + toast。
+   三个 app（push-wp / ddl-desktop / launch-manager）共用，保证家族化视觉。
+   各 app 仅保留自身布局与语义令牌（如 --todo-bg / --code-bg）。 */
+
+:root {
+  color-scheme: light;
+  --bg: #eef1f7;
+  --surface: #ffffff;
+  --surface-subtle: #f5f7fc;
+  --overlay: #ffffff;
+  --text: #1c2130;
+  --muted: #767e91;
+  --line: #e2e6f0;
+  --accent: #2f6fed;
+  --accent-2: #6a4ded;
+  --accent-hover: #2559c9;
+  --accent-soft: #e8effd;
+  --success: #2f9e63;
+  --warning: #d98a1f;
+  --danger: #cf4545;
+  --danger-soft: #fdecec;
+  --info: #2f6fed;
+  --shadow: 0 18px 50px rgba(28, 40, 80, .18);
+  --scroll-thumb: #c6cddd;
+  --scroll-thumb-hover: #a9b3cc;
+
+  /* 兼容各 app 旧令牌名，统一指向家族调色板 */
+  --text-dim: var(--muted);
+  --border: var(--line);
+  --bg-panel: var(--surface-subtle);
+  --bg-input: var(--surface-subtle);
+  --cell: var(--surface-subtle);
+  --ok: var(--success);
+  --scrollbar: var(--scroll-thumb);
+  --scrollbar-hover: var(--scroll-thumb-hover);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14161c;
+  --surface: #1e2129;
+  --surface-subtle: #242833;
+  --overlay: #232733;
+  --text: #e9ebf3;
+  --muted: #98a0b3;
+  --line: #343947;
+  --accent: #7fa2ff;
+  --accent-2: #a68bff;
+  --accent-hover: #a2b8ff;
+  --accent-soft: #2b3757;
+  --success: #58c08a;
+  --warning: #e0a44c;
+  --danger: #ff8585;
+  --danger-soft: #4b292e;
+  --info: #7fa2ff;
+  --shadow: 0 20px 56px rgba(0, 0, 0, .45);
+  --scroll-thumb: #3c4254;
+  --scroll-thumb-hover: #4d5570;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 14px;
+}
+button, input, select, textarea { font: inherit; }
+button { color: inherit; }
+[hidden] { display: none !important; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 家族化自定义滚动条 */
+* { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 8px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+
+/* 家族化 toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 44px;
+  max-width: calc(100vw - 32px);
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--overlay);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translate(-50%, 10px);
+  transition: opacity .18s, transform .18s;
+  pointer-events: none;
+  z-index: 99;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.error { border-color: var(--danger); color: var(--danger); }

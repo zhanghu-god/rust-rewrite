@@ -13,6 +13,10 @@ rust-rewrite/
 │  └─ portable-kit/        # 公共能力 crate（本仓库托管）
 │     ├─ src/portable.rs   # exe 同级 data 数据隔离 + WebView2 缓存重定向
 │     └─ src/update.rs     # 方案二自动更新（Web 重定向 + SHA256SUMS，不依赖匿名 API）
+├─ shared/
+│  └─ ui/                  # 共享前端层（base.css 设计令牌/基础样式 + base.js PKUI 工具库）
+├─ scripts/
+│  └─ sync-ui.mjs          # 同步 shared/ui 到各 app src/shared
 ├─ push-wp/                # 独立 git 仓库（app）
 ├─ ddl-desktop/            # 独立 git 仓库（app）
 └─ launch-manager/         # 独立 git 仓库（app）
@@ -27,6 +31,10 @@ rust-rewrite/
 
 各 app 通过 `portable-kit.workspace = true`（path 依赖）引用，并在自己的 `update.rs`
 里定义 `UpdateConfig` 常量做薄封装，命令层保持调用 `update::*` 不变。
+
+前端 likewise：三个 app 共用 `shared/ui/base.css`（家族调色板/重置/滚动条/toast）与
+`base.js`（`window.PKUI` 工具库）。`scripts/sync-ui.mjs` 把它们同步到各 app `src/shared`，
+打包脚本自动调用；改公共前端只改 `shared/ui` 一处。
 
 ## 构建
 
