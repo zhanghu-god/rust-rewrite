@@ -99,6 +99,13 @@ description: Rust 桌面软件项目的通用工程约定
 - 更新失败不影响本地功能；启动时清理没有待更新元数据的遗留更新目录。
 - **移动端不能自替换 exe**：检测到新版本时只打开下载页（`tauri-plugin-opener` 的 `open_url`）引导安装新 APK，不得调用 `apply_update_and_restart`（Android 无 PowerShell、无 exe 可替换，会“重启无反应”）。
 
+## 桌面图标切换（launch-manager）
+
+- 提供托盘菜单与全局热键 `Ctrl+Alt+I` 切换桌面图标；设置页可选“双击桌面空白处切换”（全局鼠标钩子，默认关闭）。
+- 切换优先向 `SHELLDLL_DefView` 发 `WM_COMMAND`(`0x7402`)；若可见状态未变，用 `ShowWindow` 兜底。每次重新枚举 DefView（Progman/WorkerW），不缓存句柄。
+- 双击用 `WH_MOUSE_LL`（专用线程 + 消息循环），按系统双击时间/距离判定；`WindowFromPoint` 只接受 `Progman`/`WorkerW`/`SHELLDLL_DefView`/`SysListView32`，并用 `AccessibleObjectFromPoint` 排除桌面图标；MSAA 失败时不切换。
+- 配置读取需兼容 UTF-8 BOM（用户手动编辑后不应启动崩溃）。
+
 ## 窗口与界面适配
 
 - 默认（非全屏/非最大化）窗口必须完整落在屏幕工作区内，不得超出屏幕或被任务栏裁切。
