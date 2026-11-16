@@ -751,7 +751,7 @@ dependencies = [
 
 [[package]]
 name = "ddl-desktop"
-version = "0.3.5"
+version = "0.3.6"
 dependencies = [
  "chrono",
  "portable-kit",

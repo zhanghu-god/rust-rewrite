@@ -53,6 +53,14 @@ description: Rust 桌面软件项目的通用工程约定
 - 导入/导出复用 `portable-kit::dataio`（JSON 信封 `{format,version,app,exportedAt,files}`）；导入校验 app 名防跨 app 误导入，写入前自动备份。
 - 离线优先：本地为主存储，WebDAV/导入导出只做备份/恢复，不做实时多端合并。
 
+## 移动端（Android）
+
+- 需要手机端的 app（如 ddl-desktop）在同一仓库提供 Tauri Android 工程（`src-tauri/gen/android`），Release 附加 APK。
+- 手机端非便携：数据存系统应用目录（`app_data_dir`），桌面端仍 exe 同级 `data`；用 `cfg!(target_os)` 区分。
+- 手机端自带 WebDAV 同步（不依赖管理器），与桌面共用同一远端 `<root>/<app名>/` 目录，实现多端同一份数据。
+- 前端需响应式适配移动视口；触摸设备常显新建/删除按钮。
+- 本地构建用 `scripts/build-android.ps1`（需 Android Studio SDK+NDK；Windows 无开发者模式时手动复制 .so + Gradle 绕过符号链接）；CI `.github/workflows/android.yml` 于 Release 自动附加 APK。
+
 ## 构建与发布
 
 - 默认只分发便携 ZIP，不生成 NSIS 安装包；`tauri.conf.json` 中 `bundle.active=false`。
