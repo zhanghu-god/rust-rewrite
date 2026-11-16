@@ -61,6 +61,7 @@ description: Rust 桌面软件项目的通用工程约定
 - **不要在 `tauri.conf.json` 里写相对路径的 `appDirectoriesOverride`（如 `./data`）**：Android 启动时会报 `relative paths are not supported on Android and iOS` 导致闪退。应改为仅桌面在 `context.config_mut()` 运行时设置覆盖，移动端跳过。
 - 手机端自带 WebDAV 同步（不依赖管理器），与桌面共用同一远端 `<root>/<app名>/` 目录，实现多端同一份数据。
 - 前端需响应式适配移动视口；触摸设备常显新建/删除按钮。
+- **窄屏（≤700px，桌面最小窗 720px 不触发）月历改为单列日程列表**：隐藏星期表头、只显示当月日期格、任务项全宽显示标题；桌面保持 7 列月历网格，移动适配不得改动桌面布局。
 - 本地构建用 `scripts/build-android.ps1`（需 Android Studio SDK+NDK；Windows 无开发者模式时手动复制 .so + Gradle 绕过符号链接）；CI `.github/workflows/release.yml` 于 tag 推送自动构建并附加 APK。
 - **Android native 库必须 16KB 页对齐**（Android 15+ 16KB 页面设备否则点击即闪退）：在 app 的 `.cargo/config.toml` 为 `aarch64-linux-android` 加 `link-arg=-Wl,-z,max-page-size=16384`（含 common-page-size），并设 `jniLibs.useLegacyPackaging=true`（安装时解压 .so）；用 `llvm-readelf -l` 验证 LOAD `Align=0x4000`。
 - 移动端日志用 `portable-kit::logging::init_at(app_data_dir, ...)` 写入应用目录，便于无 logcat 时排查启动崩溃。
