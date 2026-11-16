@@ -60,7 +60,9 @@ description: Rust 桌面软件项目的通用工程约定
 - 手机端非便携：数据存系统应用目录（`app_data_dir`），桌面端仍 exe 同级 `data`；用 `cfg!(target_os)` 区分。
 - 手机端自带 WebDAV 同步（不依赖管理器），与桌面共用同一远端 `<root>/<app名>/` 目录，实现多端同一份数据。
 - 前端需响应式适配移动视口；触摸设备常显新建/删除按钮。
-- 本地构建用 `scripts/build-android.ps1`（需 Android Studio SDK+NDK；Windows 无开发者模式时手动复制 .so + Gradle 绕过符号链接）；CI `.github/workflows/android.yml` 于 Release 自动附加 APK。
+- 本地构建用 `scripts/build-android.ps1`（需 Android Studio SDK+NDK；Windows 无开发者模式时手动复制 .so + Gradle 绕过符号链接）；CI `.github/workflows/release.yml` 于 tag 推送自动构建并附加 APK。
+- **Android native 库必须 16KB 页对齐**（Android 15+ 16KB 页面设备否则点击即闪退）：在 app 的 `.cargo/config.toml` 为 `aarch64-linux-android` 加 `link-arg=-Wl,-z,max-page-size=16384`（含 common-page-size），并设 `jniLibs.useLegacyPackaging=true`（安装时解压 .so）；用 `llvm-readelf -l` 验证 LOAD `Align=0x4000`。
+- 移动端日志用 `portable-kit::logging::init_at(app_data_dir, ...)` 写入应用目录，便于无 logcat 时排查启动崩溃。
 
 ## 构建与发布
 
