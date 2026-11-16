@@ -45,6 +45,14 @@ description: Rust 桌面软件项目的通用工程约定
 - 各 app `index.html` 先引 `shared/base.css` 与 `shared/base.js`；`style.css` 仅保留自身布局与语义令牌（如 --todo-bg/--code-bg）；`main.js` 复用 PKUI，不重复实现工具函数。
 - `scripts/sync-ui.mjs` 将 `shared/ui` 同步到各 app `src/shared`（零构建前端需物理存在）；打包脚本自动调用。改公共前端只改 `shared/ui` 一处。
 
+## 数据备份与迁移
+
+- WebDAV 云备份统一由常驻管理器调度，引擎复用 `portable-kit::webdav`（blocking reqwest + Basic 认证）；凭据只存管理器配置，各 app 不各自接 WebDAV。
+- 远端布局 `<root>/<app名>/…` + `manifest.json`（sha/mtime）做增量上传；把每个 app 的 `data/` 当不透明文件镜像，排除 cache/update/logs。
+- 触发：每小时定时 + 管理器退出时 + 设置页“立即备份”；恢复前先把本地现有文件备份到 `data/restore-backup-<ts>/`。
+- 导入/导出复用 `portable-kit::dataio`（JSON 信封 `{format,version,app,exportedAt,files}`）；导入校验 app 名防跨 app 误导入，写入前自动备份。
+- 离线优先：本地为主存储，WebDAV/导入导出只做备份/恢复，不做实时多端合并。
+
 ## 构建与发布
 
 - 默认只分发便携 ZIP，不生成 NSIS 安装包；`tauri.conf.json` 中 `bundle.active=false`。
