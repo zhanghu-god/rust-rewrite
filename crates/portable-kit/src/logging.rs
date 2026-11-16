@@ -16,10 +16,19 @@ static APP_NAME: OnceLock<String> = OnceLock::new();
 /// 初始化日志目录（exe 同级 data/logs）并记录应用名。返回日志目录。
 pub fn init(app_name: &str) -> Result<PathBuf, String> {
     let dir = crate::portable::portable_data_dir()?.join("logs");
-    fs::create_dir_all(&dir).map_err(|e| format!("无法创建日志目录：{e}"))?;
-    let _ = LOG_DIR.set(dir.clone());
+    init_dir(&dir, app_name)
+}
+
+/// 在指定的数据目录下初始化日志（移动端无 exe 同级 data，用应用数据目录）。
+pub fn init_at(data_dir: &Path, app_name: &str) -> Result<PathBuf, String> {
+    init_dir(&data_dir.join("logs"), app_name)
+}
+
+fn init_dir(dir: &Path, app_name: &str) -> Result<PathBuf, String> {
+    fs::create_dir_all(dir).map_err(|e| format!("无法创建日志目录：{e}"))?;
+    let _ = LOG_DIR.set(dir.to_path_buf());
     let _ = APP_NAME.set(app_name.to_string());
-    Ok(dir)
+    Ok(dir.to_path_buf())
 }
 
 /// 当前日志目录（未初始化时为 None）。
