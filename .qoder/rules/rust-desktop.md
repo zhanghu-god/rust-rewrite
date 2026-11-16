@@ -74,6 +74,7 @@ description: Rust 桌面软件项目的通用工程约定
 - 主窗口类 app 默认窗口统一 1100×700、min 720×520、居中、可调整（启动器小面板除外），保证非全屏不超出屏幕。
 - 发布流程：release 编译 → 打包 → Git 提交并推送 `main` 与 `vX.Y.Z` tag → GitHub Release 上传 ZIP → 回读远端大小与 digest。
 - 优先用 GitHub Actions 云端构建发布（`ddl-desktop/.github/workflows/release.yml`）：推送 `v*` tag 或手动触发，并行构建 Windows ZIP 与 Android APK 后自动附加到 Release，避免本地慢上传。workspace 以 `rust-rewrite` 为主 checkout、三个 app 为子目录；Windows 用 `pwsh` 执行打包脚本（UTF-8）；exe 路径用 `cargo metadata` 定位；Android 用预装 SDK 装 NDK、构建失败重试一次。
+- **CI 构建下发（推送 tag / workflow_dispatch）后即可向用户汇报“已下发构建”，不需轮询等待 CI 完成**；CI 失败由用户通知后再修复。
 - 统一用 `cargo build/test/clippy --workspace` 与 `cargo fmt --all`；各 app 打包脚本自动定位共享 `target/`。
 
 ## 部署边界
@@ -95,6 +96,7 @@ description: Rust 桌面软件项目的通用工程约定
 - 更新包暂存在 exe 同级 `data/update`，只替换 exe、README 等程序文件，不覆盖用户数据。
 - 替换前提示是否立即重启；立即重启由后台脚本等待进程退出后替换并重新启动，选择稍后则保留暂存更新。
 - 更新失败不影响本地功能；启动时清理没有待更新元数据的遗留更新目录。
+- **移动端不能自替换 exe**：检测到新版本时只打开下载页（`tauri-plugin-opener` 的 `open_url`）引导安装新 APK，不得调用 `apply_update_and_restart`（Android 无 PowerShell、无 exe 可替换，会“重启无反应”）。
 
 ## 窗口与界面适配
 
