@@ -48,7 +48,7 @@ description: Rust 桌面软件项目的通用工程约定
 ## 数据备份与迁移
 
 - WebDAV 云备份统一由常驻管理器调度，引擎复用 `portable-kit::webdav`（blocking reqwest + Basic 认证）；凭据只存管理器配置，各 app 不各自接 WebDAV。
-- 远端布局 `<root>/<app名>/…` + `manifest.json`（sha/mtime）做增量上传；把每个 app 的 `data/` 当不透明文件镜像，排除 cache/update/logs。
+- 远端布局 `<root>/<app名>/…` + `manifest.json`（sha/mtime）做增量上传；把每个 app 的 `data/` 当不透明文件镜像，排除 cache/update/logs；**管理器自身配置也纳入备份/导入导出**（扫描器排除自身，需单独加入）。
 - 触发：每小时定时 + 管理器退出时 + 设置页“立即备份”；恢复前先把本地现有文件备份到 `data/restore-backup-<ts>/`。
 - 导入/导出复用 `portable-kit::dataio`（JSON 信封 `{format,version,app,exportedAt,files}`）；导入校验 app 名防跨 app 误导入，写入前自动备份。
 - 离线优先：本地为主存储，WebDAV/导入导出只做备份/恢复，不做实时多端合并。
