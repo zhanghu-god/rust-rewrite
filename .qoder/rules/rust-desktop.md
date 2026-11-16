@@ -58,6 +58,7 @@ description: Rust 桌面软件项目的通用工程约定
 
 - 需要手机端的 app（如 ddl-desktop）在同一仓库提供 Tauri Android 工程（`src-tauri/gen/android`），Release 附加 APK。
 - 手机端非便携：数据存系统应用目录（`app_data_dir`），桌面端仍 exe 同级 `data`；用 `cfg!(target_os)` 区分。
+- **不要在 `tauri.conf.json` 里写相对路径的 `appDirectoriesOverride`（如 `./data`）**：Android 启动时会报 `relative paths are not supported on Android and iOS` 导致闪退。应改为仅桌面在 `context.config_mut()` 运行时设置覆盖，移动端跳过。
 - 手机端自带 WebDAV 同步（不依赖管理器），与桌面共用同一远端 `<root>/<app名>/` 目录，实现多端同一份数据。
 - 前端需响应式适配移动视口；触摸设备常显新建/删除按钮。
 - 本地构建用 `scripts/build-android.ps1`（需 Android Studio SDK+NDK；Windows 无开发者模式时手动复制 .so + Gradle 绕过符号链接）；CI `.github/workflows/release.yml` 于 tag 推送自动构建并附加 APK。
