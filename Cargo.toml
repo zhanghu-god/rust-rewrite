@@ -31,3 +31,8 @@ codegen-units = 1
 lto = true
 opt-level = "s"
 strip = true
+
+# dev 去掉 DWARF 调试信息：加快增量编译、显著减小 Android debug .so；
+# 保留符号表以便 panic 背栈。release 维持 LTO+strip 出小体积便携包。
+[profile.dev]
+debug = 0
