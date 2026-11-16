@@ -69,6 +69,7 @@ description: Rust 桌面软件项目的通用工程约定
 - ZIP 内为**单一以 productName 命名的顶层目录**（如 `push-wp/`、`DDL Board/`、`Launch Manager/`），三个 app 打包格式统一；打包脚本用 `$Config.productName` 作 staging 目录名。
 - 主窗口类 app 默认窗口统一 1100×700、min 720×520、居中、可调整（启动器小面板除外），保证非全屏不超出屏幕。
 - 发布流程：release 编译 → 打包 → Git 提交并推送 `main` 与 `vX.Y.Z` tag → GitHub Release 上传 ZIP → 回读远端大小与 digest。
+- 优先用 GitHub Actions 云端构建发布（`ddl-desktop/.github/workflows/release.yml`）：推送 `v*` tag 或手动触发，并行构建 Windows ZIP 与 Android APK 后自动附加到 Release，避免本地慢上传。workspace 以 `rust-rewrite` 为主 checkout、三个 app 为子目录；Windows 用 `pwsh` 执行打包脚本（UTF-8）；exe 路径用 `cargo metadata` 定位；Android 用预装 SDK 装 NDK、构建失败重试一次。
 - 统一用 `cargo build/test/clippy --workspace` 与 `cargo fmt --all`；各 app 打包脚本自动定位共享 `target/`。
 
 ## 部署边界
